@@ -24,7 +24,7 @@ public class HttpTask implements Runnable {
             Request request = new Request();
             request.handleRequest(br);
             // 打印请求HTTP
-            request.print();
+//            request.print();
 
             String message = "Hello, I am jide!";
             Response response = new Response();
