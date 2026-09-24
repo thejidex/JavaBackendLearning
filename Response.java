@@ -1,5 +1,6 @@
 package Socket;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ public class Response {
         this.code = code;
     }
 
-    public void setStats(String status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
@@ -52,12 +53,13 @@ public class Response {
 
     public String buildResponse(Request request, String ms) {
         this.setCode(200);
-        this.setStats("OK");
+        this.setStatus("OK");
         this.setVersion(request.getVersion());
 
         Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json");
-        headers.put("Content-Length", String.valueOf(ms.getBytes().length));
+        headers.put("Content-Type", "text/plain; charset=UTF-8");
+        headers.put("Content-Length", String.valueOf(ms.getBytes(StandardCharsets.UTF_8).length));
+        headers.put("Connection", "close");
         this.setHeaders(headers);
         this.setMessage(ms);
 

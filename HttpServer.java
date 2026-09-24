@@ -18,47 +18,11 @@ public class HttpServer {
             while (true) {
                 Socket socket = serverSocket.accept();
                 new Thread(new HttpTask(socket)).start();
-                System.out.printf("这是第%d个客户\n", ++cnt);
+//                System.out.printf("这是第%d个客户\n", ++cnt);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void handleRequestLine(BufferedReader br) throws IOException {
-        String line = br.readLine();
-        String[] strs = line.split(" ");
-        assert strs.length == 3;
-        System.out.println("Method=" + strs[0]);
-        System.out.println("Uri=" + strs[1]);
-        System.out.println("Version=" + strs[2]);
-        System.out.println();
-    }
-
-    public static void handleHeader(BufferedReader br) throws IOException {
-        String line;
-        Map<String, String> mp = new HashMap<>();
-        while ((line = br.readLine()) != null && !line.isEmpty()) {
-            String[] strs = line.split(":", 2);
-            mp.put(strs[0].trim(), strs[1].trim());
-            System.out.println(line);
-        }
-    }
-
-    public static void handleResponse(OutputStream os) throws IOException {
-        String version = "HTTP/1.1";
-        String status = "200";
-        String des = "OK";
-        String StatusLine = version + " " + status + " " + des + "\r\n";
-        String ContentType = "Content-Type: text/plain; charset=UTF-8\r\n";
-        String ContentLength = "Content-Length: 11\r\n";
-        String Connection = "Connection: close\r\n";
-        String body = "Hello HTTP!";
-        String response = StatusLine + ContentType + ContentLength + Connection + "\r\n" + body;
-        byte[] res = response.getBytes();
-        os.write(res);
-        os.flush();
-        os.close();
     }
 }

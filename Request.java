@@ -63,6 +63,10 @@ public class Request {
 
     private void decodeRequestLine(BufferedReader br) throws IOException {
         String line = br.readLine();
+
+        // 防止空读入
+        if (line == null || line.isBlank()) return;
+
         String[] strs = line.split(" ");
         setMethod(strs[0]);
         setUrl(strs[1]);
@@ -73,8 +77,11 @@ public class Request {
         Map<String, String> mp = new HashMap<>();
         String line;
         String[] strs;
-        while (!"".equals(line = br.readLine())) {
+        while (!"".equals(line = br.readLine()) && !line.isEmpty()) {
             strs = line.split(":", 2);
+            if (strs.length != 2) {
+                continue;
+            }
             mp.put(strs[0].trim(), strs[1].trim());
         }
         setHeaders(mp);
