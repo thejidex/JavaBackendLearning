@@ -16,10 +16,15 @@ public class ChatServer {
 
     public ChatServer() {
         try {
+            // 选择器
             selector = Selector.open();
+            // 创建服务器
             serverSocketChannel = ServerSocketChannel.open();
+            // 设置监听端口
             serverSocketChannel.socket().bind(new InetSocketAddress(PORT));
+            // 设置非阻塞式
             serverSocketChannel.configureBlocking(false);
+            // 把服务器注册到选择器
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
             System.out.println("聊天室服务端启动了 " + PORT);
         } catch (IOException e) {
