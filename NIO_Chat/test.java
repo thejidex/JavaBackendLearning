@@ -10,29 +10,54 @@ import java.util.Set;
 
 public class test {
     public static void main(String[] args) throws IOException {
-        Selector selector = Selector.open();
 
-        ServerSocketChannel serverSocketChannel =ServerSocketChannel.open();
-        serverSocketChannel.socket().bind(new InetSocketAddress(8888));
-        serverSocketChannel.configureBlocking(false);
-        serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+    }
+}
 
-        while(true){
-            if(selector.select()!=0){
-                Set<SelectionKey> selectionkeySet=selector.selectedKeys();
-                Iterator<SelectionKey> iterator=selectionkeySet.iterator();
+class TestClone {
+    public static void main(String[] args) throws CloneNotSupportedException {
+        Writer writerx = new Writer(20, "jide");
+        Writer writery = (Writer) writerx.clone();
 
-                while(iterator.hasNext()){
-                    SelectionKey x=iterator.next();
-                    if(x.isAcceptable()){
-                        System.out.println("成功接收到一个客户端");
-                    }else if(x.isReadable()){
-                        // 处理读取数据事件
-                    }else if(x.isWritable()){
-                        // 处理写入数据事件
-                    }
-                }
-            }
-        }
+        System.out.println("浅拷贝后：");
+        System.out.println("writerx: " + writerx);
+        System.out.println("writery: " + writery);
+
+        writery.setName("xiong");
+        System.out.println("修改后：");
+        System.out.println("writerx: " + writerx);
+        System.out.println("writery: " + writery);
+    }
+}
+
+class Book {
+    public String name;
+    public int price;
+
+}
+
+class Writer implements Cloneable {
+    public int age;
+    public String name;
+
+    public Writer(int age, String name) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + "{" +
+                "age=" + age +
+                ", name='" + name + "'}";
+    }
+
+    @Override
+    protected Writer clone() throws CloneNotSupportedException {
+        return (Writer) super.clone();
     }
 }
