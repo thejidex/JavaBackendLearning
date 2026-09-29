@@ -1,4 +1,4 @@
-package Socket;
+package Socket.MyThread;
 
 public class ThreadDemo {
     public static void main(String[] args) {
@@ -24,7 +24,7 @@ class Hero implements Runnable {
     @Override
     public void run() {
         for (int i = 0; i < 5; i++) {
-            System.out.println(name + "  " + i);
+            System.out.println(Thread.currentThread() + "->" + name + "->" + i);
         }
     }
 }
