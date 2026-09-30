@@ -4,9 +4,7 @@ import java.util.concurrent.*;
 
 public class CallableDemo {
     public static void main(String[] args) throws ExecutionException, InterruptedException, TimeoutException {
-        test2();
-
-        test1();
+        test3();
     }
 
     public static void test1() throws ExecutionException, InterruptedException, TimeoutException {
@@ -22,6 +20,7 @@ public class CallableDemo {
         System.out.println("提交完了");
         int res = future.get(10, TimeUnit.SECONDS);
         System.out.println("res=" + res);
+        pool.shutdown();
     }
 
     public static void test2() throws ExecutionException, InterruptedException {
@@ -36,5 +35,21 @@ public class CallableDemo {
         System.out.println("main-》继续执行");
         int res = futureTask.get();
         System.out.println("res=" + res);
+
+
+    }
+
+    public static void test3() throws ExecutionException, InterruptedException {
+        FutureTask<Integer> futureTask = new FutureTask<>(new kk());
+        new Thread(futureTask).start();
+        int res = futureTask.get();
+        System.out.println("res=" + res);
+    }
+}
+
+class kk implements Callable<Integer> {
+    @Override
+    public Integer call() {
+        return 12;
     }
 }
