@@ -21,13 +21,15 @@ public class test {
 class myRun implements Runnable {
     public static int t = 0;
 
-    public synchronized void increase() {
+    public synchronized static void increase() {
+        System.out.println(Thread.currentThread().getName());
         t++;
     }
+    // 同步对象 可重入性 同步代码块
 
     @Override
     public void run() {
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 1000; i++) {
             increase();
         }
     }
