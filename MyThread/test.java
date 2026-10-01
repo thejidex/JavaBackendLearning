@@ -1,23 +1,34 @@
 package Socket.MyThread;
 
 public class test {
+    public static void main(String[] args) throws InterruptedException {
+        myRun k = new myRun();
+
+        Thread[] threads = new Thread[5];
+        for (int i = 0; i < 5; i++) {
+            Thread thread = new Thread(k);
+            thread.start();
+            threads[i] = thread;
+        }
+        for (int i = 0; i < 5; i++) {
+            threads[i].join();
+        }
+
+        System.out.println(myRun.t);
+    }
+}
+
+class myRun implements Runnable {
     public static int t = 0;
 
-    public static void main(String[] args) throws InterruptedException {
-        int n = 3;
-        int cnt = 100000;
-        Thread[] threads = new Thread[n];
-        for (int i = 0; i < n; i++) {
-            threads[i] = new Thread(() -> {
-                for (int j = 0; j < cnt; j++) {
-                    t++;
-                }
-            });
-            threads[i].start();
+    public synchronized void increase() {
+        t++;
+    }
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 10000; i++) {
+            increase();
         }
-        for (Thread thread : threads) {
-            thread.join();
-        }
-        System.out.println("t=" + t);
     }
 }
