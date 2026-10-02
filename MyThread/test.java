@@ -1,5 +1,7 @@
 package Socket.MyThread;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class test {
     public static void main(String[] args) throws InterruptedException {
         myRun k = new myRun();
@@ -19,11 +21,10 @@ public class test {
 }
 
 class myRun implements Runnable {
-    public static int t = 0;
+    public static AtomicInteger t=new AtomicInteger(0);
 
     public synchronized static void increase() {
-        System.out.println(Thread.currentThread().getName());
-        t++;
+        t.incrementAndGet();
     }
     // 同步对象 可重入性 同步代码块
 
