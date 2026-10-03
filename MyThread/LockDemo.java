@@ -15,11 +15,16 @@ public class LockDemo {
                     } finally {
                         lock.unlock();
                     }
+                    try{
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
             thread.start();
         }
     }
 
-    private static final ReentrantLock lock = new ReentrantLock(true);
+    private static final ReentrantLock lock = new ReentrantLock(false);
 }
