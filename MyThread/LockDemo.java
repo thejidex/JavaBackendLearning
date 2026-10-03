@@ -6,46 +6,20 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class LockDemo {
     public static void main(String[] args) {
-
-        Thread thread = new Thread(() -> {
-            lock.lock();
-            try {
-                System.out.println("线程1拿到锁");
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } finally {
-                System.out.println("线程1释放锁");
-                lock.unlock();
-            }
-        });
-
-        Thread thread1 = new Thread(() -> {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                if (lock.tryLock(3, TimeUnit.SECONDS)) {
+        for (int i = 0; i < 5; i++) {
+            Thread thread = new Thread(() -> {
+                for (int j = 0; j < 3; j++) {
+                    lock.lock();
                     try {
-                        System.out.println("线程2拿到锁了");
+                        System.out.println(Thread.currentThread().getName() + "获得锁");
                     } finally {
                         lock.unlock();
                     }
-                } else {
-                    System.out.println("线程2没有拿到锁");
                 }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        thread.start();
-        thread1.start();
+            });
+            thread.start();
+        }
     }
 
-    private static final ReentrantLock lock = new ReentrantLock();
+    private static final ReentrantLock lock = new ReentrantLock(true);
 }
