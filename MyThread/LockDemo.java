@@ -1,39 +1,51 @@
 package Socket.MyThread;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class LockDemo {
-    public static void main(String[] args) throws InterruptedException {
-        Thread t1 = new Thread(() -> {
-            for (int i = 0; i < 1000; i++) {
-                add();
+    public static void main(String[] args) {
+
+        Thread thread = new Thread(() -> {
+            lock.lock();
+            try {
+                System.out.println("线程1拿到锁");
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } finally {
+                System.out.println("线程1释放锁");
+                lock.unlock();
             }
         });
-        Thread t2 = new Thread(() -> {
-            for (int i = 0; i < 1000; i++) {
-                add();
+
+        Thread thread1 = new Thread(() -> {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            try {
+                if (lock.tryLock(3, TimeUnit.SECONDS)) {
+                    try {
+                        System.out.println("线程2拿到锁了");
+                    } finally {
+                        lock.unlock();
+                    }
+                } else {
+                    System.out.println("线程2没有拿到锁");
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
         });
 
-        t1.start();
-        t2.start();
-
-        t1.join();
-        t2.join();
-
-        System.out.println("cnt=" + cnt);
+        thread.start();
+        thread1.start();
     }
 
-    private static int cnt = 0;
-    private static final Lock lock = new ReentrantLock();
-
-    public static void add() {
-        lock.lock();
-        try {
-            cnt++;
-        } finally {
-            lock.unlock();
-        }
-    }
+    private static final ReentrantLock lock = new ReentrantLock();
 }
