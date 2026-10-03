@@ -14,6 +14,7 @@ class Counter {
     private int cnt = 0;
     private final Lock lock = new ReentrantLock();
 
+    synchronized
     public void add() {
         lock.lock();
         try {
