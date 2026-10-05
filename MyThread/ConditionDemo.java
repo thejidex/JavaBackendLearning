@@ -30,7 +30,7 @@ public class ConditionDemo {
                 }
             }
         }, "Consumer");
-        
+
         producer.start();
         consumer.start();
     }
