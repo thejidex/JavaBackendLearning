@@ -51,6 +51,11 @@ class RWDemo {
         new Thread(RWDemo::read).start();
         new Thread(RWDemo::read).start();
         new Thread(RWDemo::read).start();
+        new Thread(() -> {
+            write("World!");
+        }).start();
+        new Thread(RWDemo::read).start();
+        new Thread(RWDemo::read).start();
         new Thread(RWDemo::read).start();
     }
 }
