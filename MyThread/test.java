@@ -6,60 +6,49 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class test {
+    private int product = 0;
+
+    public synchronized void put() throws InterruptedException {
+        while (product == 1) {
+            System.out.println("已经有一个商品了");
+            wait();
+        }
+        product = 1;
+        System.out.println(Thread.currentThread().getName() + "生产了一个商品");
+        notifyAll();
+    }
+
+    public synchronized void take() throws InterruptedException {
+        while (product == 0) {
+            System.out.println("现在没有商品");
+            wait();
+        }
+        product = 0;
+        System.out.println(Thread.currentThread().getName() + "拿走了一个商品");
+        notifyAll();
+    }
+
     public static void main(String[] args) throws InterruptedException {
-    }
-}
-
-class RWDemo {
-    private final static ReentrantReadWriteLock rwlock = new ReentrantReadWriteLock();
-    private final static Lock readLock = rwlock.readLock();
-    private final static Lock writeLock = rwlock.writeLock();
-    private static String data = "Hello jide!";
-
-    public static void read() {
-        readLock.lock();
-        try {
-            System.out.println(Thread.currentThread().getName() + "开始读取数据");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        test x = new test();
+        Thread producer = new Thread(() -> {
+            for (int i = 0; i < 5; i++) {
+                try {
+                    x.put();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
-            System.out.println(Thread.currentThread().getName() + "读取到数据:data=" + data);
-        } finally {
-            readLock.unlock();
-        }
-    }
-
-    public static void write(String newData) {
-        writeLock.lock();
-        try {
-            System.out.println(Thread.currentThread().getName() + "开始修改数据");
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        });
+        Thread consumer = new Thread(() -> {
+            for (int i = 0; i < 5; i++) {
+                try {
+                    x.take();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
-            data = newData;
-            System.out.println(Thread.currentThread().getName() + "修改完成");
-        } finally {
-            writeLock.unlock();
-        }
-    }
-
-    public static void main(String[] args) {
-        new Thread(RWDemo::read).start();
-        new Thread(RWDemo::read).start();
-        new Thread(RWDemo::read).start();
-        new Thread(() -> {
-            write("World!");
-        }).start();
-        new Thread(() -> {
-            write("KKKKKK!");
-        }).start();
-
-        new Thread(RWDemo::read).start();
-        new Thread(RWDemo::read).start();
-        new Thread(RWDemo::read).start();
+        });
+        producer.start();
+        consumer.start();
     }
 }
