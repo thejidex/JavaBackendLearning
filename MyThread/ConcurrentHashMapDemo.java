@@ -21,5 +21,23 @@ public class ConcurrentHashMapDemo {
 
         x = map.get(2);
         System.out.println("x=" + x);
+
+        String i = map.computeIfAbsent(
+                3,
+                key -> {
+                    System.out.println("hello");
+                    return "kk";
+                }
+        );
+        String j = map.get(3);
+        System.out.println("i=" + i);
+        i = map.computeIfAbsent(
+                3,
+                key -> {
+                    System.out.println("hello");
+                    return "kk";
+                }
+        );
+        System.out.println("i=" + i);
     }
 }
