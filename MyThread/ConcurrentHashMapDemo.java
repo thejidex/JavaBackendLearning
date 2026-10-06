@@ -17,5 +17,14 @@ public class ConcurrentHashMapDemo {
         System.out.println(c);
         System.out.println(d);
         System.out.println(map.get(1));
+
+        String e = map.computeIfAbsent(
+                1,
+                key -> {
+                    return "five";
+                }
+        );
+        System.out.println(e);
+        System.out.println(map.get(1));
     }
 }
