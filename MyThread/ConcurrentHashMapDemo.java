@@ -4,27 +4,38 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConcurrentHashMapDemo {
+    private final ConcurrentHashMap<String, Integer> visitCntMap;
+
     public static void main(String[] args) throws InterruptedException {
-        ConcurrentHashMap<Integer, String> map = new ConcurrentHashMap<>();
+        ConcurrentHashMapDemo x = new ConcurrentHashMapDemo();
 
-        String a = map.putIfAbsent(1, "one");
-        String b = map.putIfAbsent(1, "two");
-        String c = map.put(1, "three");
-        String d = map.put(1, "four");
+        x.userVisit("jide");
+        x.userVisit("jide");
+        x.userVisit("xiong");
+        x.userVisit("xiaomei");
 
-        System.out.println(a);
-        System.out.println(b);
-        System.out.println(c);
-        System.out.println(d);
-        System.out.println(map.get(1));
+        System.out.println("jide=" + x.getUserVisit("jide"));
+        System.out.println("xiong=" + x.getUserVisit("xiong"));
+        System.out.println("ta=" + x.getUserVisit("ta"));
+    }
 
-        String e = map.computeIfAbsent(
-                1,
-                key -> {
-                    return "five";
-                }
+    public void userVisit(String name) {
+        visitCntMap.compute(
+                name,
+                (key, value) ->
+                        value == null ? 1 : value + 1
         );
-        System.out.println(e);
-        System.out.println(map.get(1));
+    }
+
+    public int getUserVisit(String name) {
+        return visitCntMap.getOrDefault(name, 0);
+    }
+
+    public ConcurrentHashMapDemo() {
+        this.visitCntMap = new ConcurrentHashMap<>();
+    }
+
+    public ConcurrentHashMap<String, Integer> getVisitCntMap() {
+        return visitCntMap;
     }
 }
