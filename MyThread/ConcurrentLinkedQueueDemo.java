@@ -3,25 +3,29 @@ package Socket.MyThread;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ConcurrentLinkedQueueDemo {
-    public static void main(String[] args) {
-        ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>();
+    public static void main(String[] args) throws InterruptedException {
+        ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
 
-        queue.add("C/C++");
-        queue.add("Python");
-        queue.add("Java");
-        queue.add("MySQL");
-        // add 满了直接报错
 
-        queue.offer("Redis");
-        // offer 满了返回false，不会报错
+        Thread[] threads = new Thread[4];
+        for (int i = 0; i < 4; i++) {
+            int id = i;
+            threads[i] = new Thread(() -> {
+                for (int j = 0; j < 1000; j++) {
+                    queue.offer(id * 1000 + j);
+                }
+            });
+            threads[i].start();
+        }
 
-        System.out.println(queue);
+        for (int i = 0; i < 4; i++) {
+            threads[i].join();
+        }
 
-        System.out.println(queue.peek());
-        System.out.println(queue.poll());
-        System.out.println(queue.poll());
-        System.out.println(queue.element());
-        System.out.println(queue);
+        int cnt = 0;
+        while (queue.poll() != null)
+            cnt++;
 
+        System.out.println("cnt=" + cnt);
     }
 }
