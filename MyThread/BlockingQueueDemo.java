@@ -24,7 +24,7 @@ public class BlockingQueueDemo {
             for (int i = 1; i <= 20; i++) {
                 try {
                     int value = queue.take();
-                    System.out.println("cost: " + i);
+                    System.out.println("cost: " + value);
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
