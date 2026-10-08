@@ -1,20 +1,27 @@
 package Socket.MyThread;
 
 public class ThreadLocalDemo {
-    private static ThreadLocal<Integer> threadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<Person> threadLocal = new ThreadLocal<>();
 
     public static void main(String[] args) {
-        Thread t1 = new Thread(() -> {
-            threadLocal.set(100);
-            System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
-        });
+        threadLocal.set(new Person("jide"));
+        System.out.println(threadLocal.get().name);
 
-        Thread t2 = new Thread(() -> {
-            threadLocal.set(200);
-            System.out.println(Thread.currentThread().getName() + ":" + threadLocal.get());
-        });
+        Person x = threadLocal.get();
+        x.setName("xiong");
 
-        t1.start();
-        t2.start();
+        System.out.println(threadLocal.get().name);
+    }
+}
+
+class Person {
+    public String name;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Person(String x) {
+        name = x;
     }
 }
