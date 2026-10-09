@@ -8,21 +8,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class ThreadPoolDemo {
-    private static final int N = 5;
-    private static final ExecutorService exec = Executors.newFixedThreadPool(N);
 
     public static void main(String[] args) {
-        exec.submit(() -> {
-            System.out.println("Start");
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        ExecutorService pool = Executors.newFixedThreadPool(2);
+        try {
+            System.out.println("submitter=" + Thread.currentThread().getName());
+
+            for (String id : new String[]{"A", "B", "C", "D", "E", "F"}) {
+                Runnable task = () -> {
+                    System.out.println("task-" + id + " on " + Thread.currentThread().getName());
+                };
+                pool.execute(task);
+//                task.run();
             }
-            System.out.println("End");
-        });
-        System.out.println("Main thread continue to execute other operations.");
-        System.out.println(Thread.currentThread().getName() + " Thread is working");
-        exec.shutdown();
+
+            System.out.println("submitted all on " + Thread.currentThread().getName());
+        } finally {
+            pool.shutdown();
+        }
     }
 }
