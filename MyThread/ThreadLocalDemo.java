@@ -3,14 +3,18 @@ package Socket.MyThread;
 public class ThreadLocalDemo {
     private static final ThreadLocal<Person> threadLocal = new ThreadLocal<>();
 
-    public static void main(String[] args) {
-        threadLocal.set(new Person("jide"));
-        System.out.println(threadLocal.get().name);
+    public static void main(String[] args) throws InterruptedException {
+        System.out.println(threadLocal.get());
+        new Thread(()->{
+            threadLocal.set(new Person("jack"));
+            System.out.println(threadLocal.get().name);
+        }).start();
+        Thread.sleep(2000);
+        System.out.println(threadLocal.get());
 
-        Person x = threadLocal.get();
-        x.setName("xiong");
-
-        System.out.println(threadLocal.get().name);
+        new Thread(()->{
+            System.out.println(threadLocal.get());
+        }).start();
     }
 }
 
