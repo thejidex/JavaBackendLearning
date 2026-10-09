@@ -2,27 +2,41 @@ package Socket.MyThread;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class ThreadPoolDemo {
 
     public static void main(String[] args) {
-        ExecutorService pool = Executors.newFixedThreadPool(2);
-        try {
-            System.out.println("submitter=" + Thread.currentThread().getName());
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(
+                2,
+                4,
+                30,
+                TimeUnit.SECONDS,
+                new ArrayBlockingQueue<>(2),
+                Executors.defaultThreadFactory(),
+                new ThreadPoolExecutor.AbortPolicy()
+        );
 
-            for (String id : new String[]{"A", "B", "C", "D", "E", "F"}) {
+        try {
+            System.out.println(Thread.currentThread().getName() + " begin to submit");
+
+            for (int i = 1; i <= 10; i++) {
+                int id = i;
                 Runnable task = () -> {
                     System.out.println("task-" + id + " on " + Thread.currentThread().getName());
                 };
-                pool.execute(task);
-//                task.run();
+                try {
+                    pool.execute(task);
+                    System.out.println("task-" + id + " is Accepted");
+                } catch (RejectedExecutionException e) {
+                    System.out.println("task-" + id + " is Rejected");
+//                    e.printStackTrace();
+                }
             }
 
-            System.out.println("submitted all on " + Thread.currentThread().getName());
+            System.out.println("all task submitted on " + Thread.currentThread().getName());
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             pool.shutdown();
         }
