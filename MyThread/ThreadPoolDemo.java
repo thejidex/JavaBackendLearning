@@ -5,40 +5,30 @@ import java.util.List;
 import java.util.concurrent.*;
 
 public class ThreadPoolDemo {
+    private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
+    private static final int CORE_POOL_SIZE = CPU_COUNT *2;
+    private static final int MAX_POOL_SIZE = CPU_COUNT *2+1;
+
+    private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(
+            CORE_POOL_SIZE,
+            MAX_POOL_SIZE,
+            60L,
+            TimeUnit.SECONDS,
+            new LinkedBlockingQueue<>(1000)
+    );
 
     public static void main(String[] args) {
-        ThreadPoolExecutor pool = new ThreadPoolExecutor(
-                2,
-                4,
-                30,
-                TimeUnit.SECONDS,
-                new ArrayBlockingQueue<>(2),
-                Executors.defaultThreadFactory(),
-                new ThreadPoolExecutor.AbortPolicy()
-        );
-
-        try {
-            System.out.println(Thread.currentThread().getName() + " begin to submit");
-
-            for (int i = 1; i <= 10; i++) {
-                int id = i;
-                Runnable task = () -> {
-                    System.out.println("task-" + id + " on " + Thread.currentThread().getName());
-                };
-                try {
-                    pool.execute(task);
-                    System.out.println("task-" + id + " is Accepted");
-                } catch (RejectedExecutionException e) {
-                    System.out.println("task-" + id + " is Rejected");
-//                    e.printStackTrace();
-                }
+        pool.execute(()->{
+            System.out.println("Async task started");
+            try{
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
+            System.out.println("Async task completed");
+        });
 
-            System.out.println("all task submitted on " + Thread.currentThread().getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            pool.shutdown();
-        }
+        System.out.println("Main thread continues to execute other operators");
+        pool.shutdown();
     }
 }
